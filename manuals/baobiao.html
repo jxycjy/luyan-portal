@@ -12,9 +12,35 @@ body{margin:0;background:#eef1f4;font-family:"Microsoft YaHei","PingFang SC",Ari
 .wrap{max-width:960px;margin:0 auto;padding:16px}
 img{width:100%;height:auto;display:block;margin-bottom:14px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.12);background:#fff}
 .note{text-align:center;color:#8a99a6;font-size:12px;padding:8px}
-</style></head>
+</style>
+<script>
+async function downloadPdf(btn, url, filename){
+  const orig = btn.textContent;
+  btn.textContent = '下载中...';
+  btn.style.opacity = '0.7';
+  btn.style.pointerEvents = 'none';
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    const blob = await r.blob();
+    const u = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = u; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(u), 1000);
+    btn.textContent = '下载完成';
+  } catch (e) {
+    console.error(e);
+    btn.textContent = '下载失败，跳转打开...';
+    setTimeout(() => window.open(url, '_blank'), 800);
+  }
+  setTimeout(() => { btn.textContent = orig; btn.style.opacity = '1'; btn.style.pointerEvents = ''; }, 2500);
+}
+</script>
+
+</head>
 <body>
-<div class="bar"><span class="t">路演查询报表操作文档 · 网页版（图片按需加载，更快）</span><a href="https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/%E8%B7%AF%E6%BC%94%E6%9F%A5%E8%AF%A2%E6%8A%A5%E8%A1%A8%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3.pdf" target="_blank" rel="noopener">下载原版 PDF</a></div>
+<div class="bar"><span class="t">路演查询报表操作文档 · 网页版（图片按需加载，更快）</span><a href="javascript:void(0)" class="btn" onclick="downloadPdf(this,'https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/%E8%B7%AF%E6%BC%94%E6%9F%A5%E8%AF%A2%E6%8A%A5%E8%A1%A8%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3.pdf','路演查询报表说明文档.pdf')">下载 PDF 到本地</a></div>
 <div class="wrap">
 <img loading="lazy" src="https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s01.jpg" alt="路演查询报表操作文档 第1张" width="100%">
 <img loading="lazy" src="https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s02.jpg" alt="路演查询报表操作文档 第2张" width="100%">
