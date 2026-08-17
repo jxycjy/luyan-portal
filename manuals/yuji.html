@@ -3,7 +3,6 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>路演提报（预计）操作手册（网页版）</title>
-<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#eef1f4;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
@@ -14,29 +13,13 @@ body{margin:0;background:#eef1f4;font-family:"Microsoft YaHei","PingFang SC",Ari
 .wrap{max-width:960px;margin:0 auto;padding:16px}
 img{width:100%;height:auto;display:block;margin-bottom:14px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.12);background:#fff}
 .note{text-align:center;color:#8a99a6;font-size:12px;padding:8px}
-#gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f9b8e,#0c7d72)}
-#gate .card{background:#fff;border-radius:16px;padding:34px 30px;width:330px;max-width:90vw;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-#gate .logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#0f9b8e,#0c7d72);display:inline-flex;align-items:center;justify-content:center;font-size:26px;color:#fff;margin-bottom:14px}
-#gate h1{font-size:18px;color:#1f2d2b;margin-bottom:6px}
-#gate p{font-size:13px;color:#6b7b78;margin-bottom:18px}
-#gate input{width:100%;padding:11px 13px;border:1px solid #d7e3e0;border-radius:10px;font-size:15px;outline:none;box-sizing:border-box}
-#gate button{width:100%;margin-top:13px;padding:11px;border:none;border-radius:10px;background:#0f9b8e;color:#fff;font-size:15px;cursor:pointer}
-#gate .err{color:#c0392b;font-size:13px;margin-top:11px;min-height:16px}
 </style>
 </head>
 <body>
-<div id="gate"><div class="card">
-  <div class="logo">📘</div>
-  <h1>操作手册</h1>
-  <p>请输入访问密码（30 分钟内免登录）</p>
-  <input id="pw" type="password" placeholder="访问密码" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()">
-  <button onclick="unlock()">查看手册</button>
-  <div class="err" id="err"></div>
-</div></div>
 <div class="bar"><span class="t" id="mtitle">路演提报（预计）操作手册 · 网页版</span><a href="javascript:void(0)" class="btn" id="dlbtn">下载 PDF 到本地</a></div>
 <div class="wrap" id="mwrap"></div>
 <script>
-const DATA_CIPHER = "U2FsdGVkX1+Q4pmDVfc3DUxLch1wN1xpVJulYogeDH9xUrk7T3lgYlLcnpES/3Lx5Kdmn6YAJ5c+DXQuTQ9zJ0vSKB+OYij9ZMYfi/TBlx3P1IJOLrc6I/j8zi1rUD/BzPnOaBVq+uX9VGmD8fUtDexZc8nYJP8ccEFFkgti1HPsfiCX1Eo18Bb9dLvQSS+7AuVUd13YOLn3HUI/+9CggCm6vRdcuu/7d2ddt+FQBCTI7QBXCHKXJOFxLQ/au/opB8zqpzugVp1stIEzKQncPnkrDNUHGRYVytiybCN/y2rayvr0PArVxgaLe/sqrO9EAe06rCIvmwnMOUyUiYVU+XP3fSbV5/lDH/Q50A6Fif4TeeLk9k7msO/w9FVkvGhNevEuaIF0EDH63lk0r0JPvvzAWLBUxV+6A+GQiKMQRZBZUINgcBv+ayRNL3Gs8aCdc3A47VVxMYA5YMyLxvQ7ItEEoHU7GMC0vA7qTBDgjU42aaTFVC7/fmCKoZmW57CSYcx1ZZCXBkIRq6dj8gYF9EbrLoIGunAyuL6zKwfhlH7NcMku7tvNNB5nEP3blJcfHBfUXzVhTs8bDxO7xYfcHrqpKRUZgQaC+zRP++xCqjpHR/1096ds57AY+iDXcIWM4Urd4L2hn5SeVU2fiutpt5a7qNgQgJ4FjbNXHaMHjca+tMuG4dS/yKoF40SWbHY1VbfpnX0PXiWEmPVkfq+v9vgoPsIUbDPzOAmbd+4XAag=";
+const DATA = {"title": "路演提报（预计）操作手册", "pdfUrl": "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/%E8%B7%AF%E6%BC%94%E6%8F%90%E6%8A%A5%EF%BC%88%E9%A2%84%E8%AE%A1%EF%BC%89%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C.pdf", "pdfName": "路演提报（预计）操作手册.pdf", "images": ["https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/yuji/s01.jpg", "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/yuji/s02.jpg", "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/yuji/s03.jpg"]};
 async function downloadPdf(btn, url, filename){
   const orig = btn.textContent;
   btn.textContent = '下载中...';
@@ -59,41 +42,12 @@ async function downloadPdf(btn, url, filename){
   }
   setTimeout(() => { btn.textContent = orig; btn.style.opacity = '1'; btn.style.pointerEvents = ''; }, 2500);
 }
-function showManual(d){
+(function(){
+  const d = DATA;
   document.getElementById('mtitle').textContent = d.title + ' · 网页版（图片按需加载，更快）';
   const bar = document.getElementById('dlbtn');
   bar.onclick = function(){ downloadPdf(bar, d.pdfUrl, d.pdfName); };
-  const wrap = document.getElementById('mwrap');
-  wrap.innerHTML = d.images.map((u,i)=>'<img loading="lazy" src="'+u+'" alt="'+d.title+' 第'+(i+1)+'张" width="100%">').join('') + '<div class="note">— 已到底 —</div>';
-}
-function tryUnlock(pw){
-  if(!pw) return false;
-  try {
-    const d = JSON.parse(CryptoJS.AES.decrypt(DATA_CIPHER, pw).toString(CryptoJS.enc.Utf8));
-    if(d && d.images){ showManual(d); return true; }
-  } catch(e){}
-  return false;
-}
-const REMEMBER_MS = 30*60*1000;
-function remember(pw){
-  try { sessionStorage.setItem('luyan_pw', pw); } catch(e){}
-  try { localStorage.setItem('luyan_pw', JSON.stringify({pw:pw, ts:Date.now()})); } catch(e){}
-}
-function readStoredPw(){
-  try { if(window.parent && window.parent!==window && window.parent.sessionStorage){ const p=window.parent.sessionStorage.getItem('luyan_pw'); if(p) return p; } } catch(e){}
-  try { const p=sessionStorage.getItem('luyan_pw'); if(p) return p; } catch(e){}
-  try { const raw=localStorage.getItem('luyan_pw'); if(raw){ try { const o=JSON.parse(raw); if(o&&o.pw&&(Date.now()-o.ts)<REMEMBER_MS) return o.pw; } catch(e){ return raw; } } } catch(e){}
-  return '';
-}
-function unlock(){
-  const pw = document.getElementById('pw').value;
-  const err = document.getElementById('err');
-  if(tryUnlock(pw)){ err.textContent=''; remember(pw); document.getElementById('gate').style.display='none'; return; }
-  err.textContent='密码错误，请重试';
-}
-(function(){
-  const pw = readStoredPw();
-  if(pw && tryUnlock(pw)){ remember(pw); document.getElementById('gate').style.display='none'; }
+  document.getElementById('mwrap').innerHTML = d.images.map((u,i)=>'<img loading="lazy" src="'+u+'" alt="'+d.title+' 第'+(i+1)+'张" width="100%">').join('') + '<div class="note">— 已到底 —</div>';
 })();
 </script>
 </body></html>
