@@ -3,7 +3,6 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>路演查询报表操作文档（网页版）</title>
-<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#eef1f4;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
@@ -14,29 +13,13 @@ body{margin:0;background:#eef1f4;font-family:"Microsoft YaHei","PingFang SC",Ari
 .wrap{max-width:960px;margin:0 auto;padding:16px}
 img{width:100%;height:auto;display:block;margin-bottom:14px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.12);background:#fff}
 .note{text-align:center;color:#8a99a6;font-size:12px;padding:8px}
-#gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f9b8e,#0c7d72)}
-#gate .card{background:#fff;border-radius:16px;padding:34px 30px;width:330px;max-width:90vw;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-#gate .logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#0f9b8e,#0c7d72);display:inline-flex;align-items:center;justify-content:center;font-size:26px;color:#fff;margin-bottom:14px}
-#gate h1{font-size:18px;color:#1f2d2b;margin-bottom:6px}
-#gate p{font-size:13px;color:#6b7b78;margin-bottom:18px}
-#gate input{width:100%;padding:11px 13px;border:1px solid #d7e3e0;border-radius:10px;font-size:15px;outline:none;box-sizing:border-box}
-#gate button{width:100%;margin-top:13px;padding:11px;border:none;border-radius:10px;background:#0f9b8e;color:#fff;font-size:15px;cursor:pointer}
-#gate .err{color:#c0392b;font-size:13px;margin-top:11px;min-height:16px}
 </style>
 </head>
 <body>
-<div id="gate"><div class="card">
-  <div class="logo">📘</div>
-  <h1>操作手册</h1>
-  <p>请输入访问密码（30 分钟内免登录）</p>
-  <input id="pw" type="password" placeholder="访问密码" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()">
-  <button onclick="unlock()">查看手册</button>
-  <div class="err" id="err"></div>
-</div></div>
 <div class="bar"><span class="t" id="mtitle">路演查询报表操作文档 · 网页版</span><a href="javascript:void(0)" class="btn" id="dlbtn">下载 PDF 到本地</a></div>
 <div class="wrap" id="mwrap"></div>
 <script>
-const DATA_CIPHER = "U2FsdGVkX19bxmAEGQKIeEHn9zzEWPo19P3C1lrJi5vLnmxMGF/4ZHAlkn/5Wlv/ijwEraQS/p/jMBFzFnc2sZc14R75QssxHfK94HwhBw0lCAD9EmJSzhgePqOQS6/4SToa8AoVg/zfDX8gNgO+Y3MrERSZfu3Vq4j2fhjWF4+1DHPXf4RM+ZeYbISrcFO5kfwr19i42j/m32ZBR+ucepOxgGsUix9oK3uXaw94p8awG8+ObxU0uVcWNeRIoV7arylFwt2UmRPq/JbxjDutGPrprIcORnZccX6OAWPRTOsN/foWwu+QFQFFvc3Ryb4CBgyuOFJK/j05wpRHVN+lHNPFDEmAzvs76E+pxUsuuMDolzt9sDynxhET3HslJ66sVrrTalvi1HZNkQ1ccPIRUP+NexR3kKaGuJ3hGm0bpLmrD8LncvtZgFmzfAkWu82xb0K/0taCJz+B8akiCLrD1zN+AThefUCEh6T1kTuZI1Xa/37CpgLUd9PKxAgths4+oajhwup6+8fXNYMPZ2yMm6MpbF5/nYogMVM3xy5lST10vwLGw43aks0/kVLUNjzBfJa3IXD5cbIoP7So07a5hz4JCRMWP3J7EUrX8nVR01ngBbAw0YYefYPJqPXDELMDr/H79ON6m/z30UkTS/MccnDo5F1uI6wqYx0yD28NmDWTKeb+1SnA3zzAvbXZfAXi27VV7oIqI8l6WQyO9C5rT00rXR6x/EqFG32unNaJdcgu03n9j2BcA2fTKQ9NkkcDZwUUPcc1q6wjnkrZ3vhXc3wWgb51pF/XOKgOXezYuNzAkFWBRNuoHLlZmzvEEWwmMY98yCFuV8fOBrGy0chEORSGjLWAl7M9mM0P0rqiIYLRRbGiGEyb88NW2W6dydV5gMu/WSKxEcny63pmAgC8NHd4zxMPsv1jU1lqeFgZiqrrjADylZmOVDPdnuhWXrsnX7/lyQQ3zQroCyDbV5NrHQ8YKZCVikelk0UkVVkYfeRJgctCSu5B+eOPmNiKZpRRfsXDHXg8gV+KU7tbTLfj2yyI9fQ6JDfuIb+/Q6kZfvYjGMe49XdtBV7rrEV1BUoXl82lWLS2CGeCRRno4gp98p8OgK4B/AfBALxhK494M2BlbKdQR1rw8X7DnMpfOUQB";
+const DATA = {"title": "路演查询报表操作文档", "pdfUrl": "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/%E8%B7%AF%E6%BC%94%E6%9F%A5%E8%AF%A2%E6%8A%A5%E8%A1%A8%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3.pdf", "pdfName": "路演查询报表说明文档.pdf", "images": ["https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s01.jpg", "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s02.jpg", "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s03.jpg", "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s04.jpg", "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s05.jpg", "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s06.jpg", "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s07.jpg"]};
 async function downloadPdf(btn, url, filename){
   const orig = btn.textContent;
   btn.textContent = '下载中...';
@@ -59,41 +42,12 @@ async function downloadPdf(btn, url, filename){
   }
   setTimeout(() => { btn.textContent = orig; btn.style.opacity = '1'; btn.style.pointerEvents = ''; }, 2500);
 }
-function showManual(d){
+(function(){
+  const d = DATA;
   document.getElementById('mtitle').textContent = d.title + ' · 网页版（图片按需加载，更快）';
   const bar = document.getElementById('dlbtn');
   bar.onclick = function(){ downloadPdf(bar, d.pdfUrl, d.pdfName); };
-  const wrap = document.getElementById('mwrap');
-  wrap.innerHTML = d.images.map((u,i)=>'<img loading="lazy" src="'+u+'" alt="'+d.title+' 第'+(i+1)+'张" width="100%">').join('') + '<div class="note">— 已到底 —</div>';
-}
-function tryUnlock(pw){
-  if(!pw) return false;
-  try {
-    const d = JSON.parse(CryptoJS.AES.decrypt(DATA_CIPHER, pw).toString(CryptoJS.enc.Utf8));
-    if(d && d.images){ showManual(d); return true; }
-  } catch(e){}
-  return false;
-}
-const REMEMBER_MS = 30*60*1000;
-function remember(pw){
-  try { sessionStorage.setItem('luyan_pw', pw); } catch(e){}
-  try { localStorage.setItem('luyan_pw', JSON.stringify({pw:pw, ts:Date.now()})); } catch(e){}
-}
-function readStoredPw(){
-  try { if(window.parent && window.parent!==window && window.parent.sessionStorage){ const p=window.parent.sessionStorage.getItem('luyan_pw'); if(p) return p; } } catch(e){}
-  try { const p=sessionStorage.getItem('luyan_pw'); if(p) return p; } catch(e){}
-  try { const raw=localStorage.getItem('luyan_pw'); if(raw){ try { const o=JSON.parse(raw); if(o&&o.pw&&(Date.now()-o.ts)<REMEMBER_MS) return o.pw; } catch(e){ return raw; } } } catch(e){}
-  return '';
-}
-function unlock(){
-  const pw = document.getElementById('pw').value;
-  const err = document.getElementById('err');
-  if(tryUnlock(pw)){ err.textContent=''; remember(pw); document.getElementById('gate').style.display='none'; return; }
-  err.textContent='密码错误，请重试';
-}
-(function(){
-  const pw = readStoredPw();
-  if(pw && tryUnlock(pw)){ remember(pw); document.getElementById('gate').style.display='none'; }
+  document.getElementById('mwrap').innerHTML = d.images.map((u,i)=>'<img loading="lazy" src="'+u+'" alt="'+d.title+' 第'+(i+1)+'张" width="100%">').join('') + '<div class="note">— 已到底 —</div>';
 })();
 </script>
 </body></html>
