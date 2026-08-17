@@ -3,6 +3,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>路演查询报表操作文档（网页版）</title>
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#eef1f4;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
@@ -13,8 +14,29 @@ body{margin:0;background:#eef1f4;font-family:"Microsoft YaHei","PingFang SC",Ari
 .wrap{max-width:960px;margin:0 auto;padding:16px}
 img{width:100%;height:auto;display:block;margin-bottom:14px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.12);background:#fff}
 .note{text-align:center;color:#8a99a6;font-size:12px;padding:8px}
+#gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f9b8e,#0c7d72)}
+#gate .card{background:#fff;border-radius:16px;padding:34px 30px;width:330px;max-width:90vw;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+#gate .logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#0f9b8e,#0c7d72);display:inline-flex;align-items:center;justify-content:center;font-size:26px;color:#fff;margin-bottom:14px}
+#gate h1{font-size:18px;color:#1f2d2b;margin-bottom:6px}
+#gate p{font-size:13px;color:#6b7b78;margin-bottom:18px}
+#gate input{width:100%;padding:11px 13px;border:1px solid #d7e3e0;border-radius:10px;font-size:15px;outline:none;box-sizing:border-box}
+#gate button{width:100%;margin-top:13px;padding:11px;border:none;border-radius:10px;background:#0f9b8e;color:#fff;font-size:15px;cursor:pointer}
+#gate .err{color:#c0392b;font-size:13px;margin-top:11px;min-height:16px}
 </style>
+</head>
+<body>
+<div id="gate"><div class="card">
+  <div class="logo">📘</div>
+  <h1>操作手册</h1>
+  <p>请输入访问密码</p>
+  <input id="pw" type="password" placeholder="访问密码" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()">
+  <button onclick="unlock()">查看手册</button>
+  <div class="err" id="err"></div>
+</div></div>
+<div class="bar"><span class="t" id="mtitle">路演查询报表操作文档 · 网页版</span><a href="javascript:void(0)" class="btn" id="dlbtn">下载 PDF 到本地</a></div>
+<div class="wrap" id="mwrap"></div>
 <script>
+const DATA_CIPHER = "U2FsdGVkX18Yd0hmFFHKi5fFA65IcQWm1RAesxAEG0qS9uazG/foKcdkz5RrNZ7MYmC1jRgcHS1Mk5paWJYO5dW+ENBxdaaiPzKFxLLJybYstN9+0UqJPsVU2DdG0H/DDgA682vyralhxSZ21MEOLVVQO5WUPjgP+C2jyyFzpgZWk12d4HuDWeyV19YKHYGRe3GAD9h8E5pWXqTOVrMiLSR38INwiiYDCB2KGtT8P6hbbOnBAG9CH5/qB1kTu1EyVoZP9IuG0ZDW8XUgrIJmKPGkKmETlltbxSZ/DYe2x3YRTqjEnmnLkJhgaA0SipIjZDGlAND4vBkec5hml3LFcFqnhUrng0xi9RO/d7T5D+NFrO0pM+LywtwHNHip/Tips1CIG6uYL70Jmjsu6HqvaQBDtxevz0Qa/Gm/qxqxGUMnTNF4QKHJuElvsYA4srLJ2QUsYLGhPmU5P93DhL/5p0hyt9Nhpn0hZsoAatoKQvC6BT/+DNLG2RtnODsBjfBhIaijyMsQ9tg4E2BEhvehYoc1k7xLbCxxOHcV2wSctI+v2PkCAU4qSxLwYzzEJMsSdBslSt/QUooI1MFXkBpj9pa/of9/3+VgHMnR51kTBTMQPd6lu0CUoV0R/Ntoo7QqpVxjxkLewZ1QO61t7vLSJe/V7Ot+/PLFAev2ygs/7TTsCOGg6vBuoPkiE7uPdTmNADGG3f3VVq4Df756IkjlpqmvtRp8/HdC/4UHPzCVDyne5AIOlj7rpjaHqTu62ZgjoPi5ATPTsxwgDx4l9BAS0jKRKZRimYIvPxx2S4401dZfONoiCMQ6owNbuOaYhKuo6aeyIpIMbU1+n8ocvuPKf4b62Fdan+xEyAqy8LCAtw33Rauivi7QGvOgj1gz8n5wcP8toIQxWMrcIbz79Aj/RuePoHFLXguqg7h3buZLrWD8I0e3nhb+/v2H4+h9yYtZwdweHrPbsUoBIQrt68bJeKrrMb+Avnd7xQlMUL+it4hlm3XsGurvbY7v8+g+rGZMI3HCtgWyxEk2y15JaV1ijs8A4dW+/Mzq0vE01NrtEHLnlYkx1IzNBBAUyIbcABX7+G6kjLoqQOrsu6TkRraqZQh1mDI8SPdDauyfS7IX/1MTM4tuWlHBiTRgLwRNq7Ql";
 async function downloadPdf(btn, url, filename){
   const orig = btn.textContent;
   btn.textContent = '下载中...';
@@ -37,19 +59,33 @@ async function downloadPdf(btn, url, filename){
   }
   setTimeout(() => { btn.textContent = orig; btn.style.opacity = '1'; btn.style.pointerEvents = ''; }, 2500);
 }
+function showManual(d){
+  document.getElementById('mtitle').textContent = d.title + ' · 网页版（图片按需加载，更快）';
+  const bar = document.getElementById('dlbtn');
+  bar.onclick = function(){ downloadPdf(bar, d.pdfUrl, d.pdfName); };
+  const wrap = document.getElementById('mwrap');
+  wrap.innerHTML = d.images.map((u,i)=>'<img loading="lazy" src="'+u+'" alt="'+d.title+' 第'+(i+1)+'张" width="100%">').join('') + '<div class="note">— 已到底 —</div>';
+}
+function tryUnlock(pw){
+  if(!pw) return false;
+  try {
+    const d = JSON.parse(CryptoJS.AES.decrypt(DATA_CIPHER, pw).toString(CryptoJS.enc.Utf8));
+    if(d && d.images){ showManual(d); return true; }
+  } catch(e){}
+  return false;
+}
+function unlock(){
+  const pw = document.getElementById('pw').value;
+  const err = document.getElementById('err');
+  if(tryUnlock(pw)){ err.textContent=''; document.getElementById('gate').style.display='none'; return; }
+  err.textContent='密码错误，请重试';
+}
+(function(){
+  let pw='';
+  try { if(window.parent && window.parent!==window && window.parent.sessionStorage) pw = window.parent.sessionStorage.getItem('luyan_pw')||''; } catch(e){}
+  if(!pw){ try { pw = sessionStorage.getItem('luyan_pw')||''; } catch(e){} }
+  if(!pw){ try { pw = localStorage.getItem('luyan_pw')||''; } catch(e){} }
+  if(pw && tryUnlock(pw)){ document.getElementById('gate').style.display='none'; }
+})();
 </script>
-
-</head>
-<body>
-<div class="bar"><span class="t">路演查询报表操作文档 · 网页版（图片按需加载，更快）</span><a href="javascript:void(0)" class="btn" onclick="downloadPdf(this,'https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/%E8%B7%AF%E6%BC%94%E6%9F%A5%E8%AF%A2%E6%8A%A5%E8%A1%A8%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3.pdf','路演查询报表说明文档.pdf')">下载 PDF 到本地</a></div>
-<div class="wrap">
-<img loading="lazy" src="https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s01.jpg" alt="路演查询报表操作文档 第1张" width="100%">
-<img loading="lazy" src="https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s02.jpg" alt="路演查询报表操作文档 第2张" width="100%">
-<img loading="lazy" src="https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s03.jpg" alt="路演查询报表操作文档 第3张" width="100%">
-<img loading="lazy" src="https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s04.jpg" alt="路演查询报表操作文档 第4张" width="100%">
-<img loading="lazy" src="https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s05.jpg" alt="路演查询报表操作文档 第5张" width="100%">
-<img loading="lazy" src="https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s06.jpg" alt="路演查询报表操作文档 第6张" width="100%">
-<img loading="lazy" src="https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/baobiao/s07.jpg" alt="路演查询报表操作文档 第7张" width="100%">
-<div class="note">— 已到底 —</div>
-</div>
 </body></html>
