@@ -28,7 +28,7 @@ img{width:100%;height:auto;display:block;margin-bottom:14px;border-radius:8px;bo
 <div id="gate"><div class="card">
   <div class="logo">📘</div>
   <h1>操作手册</h1>
-  <p>请输入访问密码</p>
+  <p>请输入访问密码（30 分钟内免登录）</p>
   <input id="pw" type="password" placeholder="访问密码" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()">
   <button onclick="unlock()">查看手册</button>
   <div class="err" id="err"></div>
@@ -36,7 +36,7 @@ img{width:100%;height:auto;display:block;margin-bottom:14px;border-radius:8px;bo
 <div class="bar"><span class="t" id="mtitle">路演查询报表操作文档 · 网页版</span><a href="javascript:void(0)" class="btn" id="dlbtn">下载 PDF 到本地</a></div>
 <div class="wrap" id="mwrap"></div>
 <script>
-const DATA_CIPHER = "U2FsdGVkX18Yd0hmFFHKi5fFA65IcQWm1RAesxAEG0qS9uazG/foKcdkz5RrNZ7MYmC1jRgcHS1Mk5paWJYO5dW+ENBxdaaiPzKFxLLJybYstN9+0UqJPsVU2DdG0H/DDgA682vyralhxSZ21MEOLVVQO5WUPjgP+C2jyyFzpgZWk12d4HuDWeyV19YKHYGRe3GAD9h8E5pWXqTOVrMiLSR38INwiiYDCB2KGtT8P6hbbOnBAG9CH5/qB1kTu1EyVoZP9IuG0ZDW8XUgrIJmKPGkKmETlltbxSZ/DYe2x3YRTqjEnmnLkJhgaA0SipIjZDGlAND4vBkec5hml3LFcFqnhUrng0xi9RO/d7T5D+NFrO0pM+LywtwHNHip/Tips1CIG6uYL70Jmjsu6HqvaQBDtxevz0Qa/Gm/qxqxGUMnTNF4QKHJuElvsYA4srLJ2QUsYLGhPmU5P93DhL/5p0hyt9Nhpn0hZsoAatoKQvC6BT/+DNLG2RtnODsBjfBhIaijyMsQ9tg4E2BEhvehYoc1k7xLbCxxOHcV2wSctI+v2PkCAU4qSxLwYzzEJMsSdBslSt/QUooI1MFXkBpj9pa/of9/3+VgHMnR51kTBTMQPd6lu0CUoV0R/Ntoo7QqpVxjxkLewZ1QO61t7vLSJe/V7Ot+/PLFAev2ygs/7TTsCOGg6vBuoPkiE7uPdTmNADGG3f3VVq4Df756IkjlpqmvtRp8/HdC/4UHPzCVDyne5AIOlj7rpjaHqTu62ZgjoPi5ATPTsxwgDx4l9BAS0jKRKZRimYIvPxx2S4401dZfONoiCMQ6owNbuOaYhKuo6aeyIpIMbU1+n8ocvuPKf4b62Fdan+xEyAqy8LCAtw33Rauivi7QGvOgj1gz8n5wcP8toIQxWMrcIbz79Aj/RuePoHFLXguqg7h3buZLrWD8I0e3nhb+/v2H4+h9yYtZwdweHrPbsUoBIQrt68bJeKrrMb+Avnd7xQlMUL+it4hlm3XsGurvbY7v8+g+rGZMI3HCtgWyxEk2y15JaV1ijs8A4dW+/Mzq0vE01NrtEHLnlYkx1IzNBBAUyIbcABX7+G6kjLoqQOrsu6TkRraqZQh1mDI8SPdDauyfS7IX/1MTM4tuWlHBiTRgLwRNq7Ql";
+const DATA_CIPHER = "U2FsdGVkX19bxmAEGQKIeEHn9zzEWPo19P3C1lrJi5vLnmxMGF/4ZHAlkn/5Wlv/ijwEraQS/p/jMBFzFnc2sZc14R75QssxHfK94HwhBw0lCAD9EmJSzhgePqOQS6/4SToa8AoVg/zfDX8gNgO+Y3MrERSZfu3Vq4j2fhjWF4+1DHPXf4RM+ZeYbISrcFO5kfwr19i42j/m32ZBR+ucepOxgGsUix9oK3uXaw94p8awG8+ObxU0uVcWNeRIoV7arylFwt2UmRPq/JbxjDutGPrprIcORnZccX6OAWPRTOsN/foWwu+QFQFFvc3Ryb4CBgyuOFJK/j05wpRHVN+lHNPFDEmAzvs76E+pxUsuuMDolzt9sDynxhET3HslJ66sVrrTalvi1HZNkQ1ccPIRUP+NexR3kKaGuJ3hGm0bpLmrD8LncvtZgFmzfAkWu82xb0K/0taCJz+B8akiCLrD1zN+AThefUCEh6T1kTuZI1Xa/37CpgLUd9PKxAgths4+oajhwup6+8fXNYMPZ2yMm6MpbF5/nYogMVM3xy5lST10vwLGw43aks0/kVLUNjzBfJa3IXD5cbIoP7So07a5hz4JCRMWP3J7EUrX8nVR01ngBbAw0YYefYPJqPXDELMDr/H79ON6m/z30UkTS/MccnDo5F1uI6wqYx0yD28NmDWTKeb+1SnA3zzAvbXZfAXi27VV7oIqI8l6WQyO9C5rT00rXR6x/EqFG32unNaJdcgu03n9j2BcA2fTKQ9NkkcDZwUUPcc1q6wjnkrZ3vhXc3wWgb51pF/XOKgOXezYuNzAkFWBRNuoHLlZmzvEEWwmMY98yCFuV8fOBrGy0chEORSGjLWAl7M9mM0P0rqiIYLRRbGiGEyb88NW2W6dydV5gMu/WSKxEcny63pmAgC8NHd4zxMPsv1jU1lqeFgZiqrrjADylZmOVDPdnuhWXrsnX7/lyQQ3zQroCyDbV5NrHQ8YKZCVikelk0UkVVkYfeRJgctCSu5B+eOPmNiKZpRRfsXDHXg8gV+KU7tbTLfj2yyI9fQ6JDfuIb+/Q6kZfvYjGMe49XdtBV7rrEV1BUoXl82lWLS2CGeCRRno4gp98p8OgK4B/AfBALxhK494M2BlbKdQR1rw8X7DnMpfOUQB";
 async function downloadPdf(btn, url, filename){
   const orig = btn.textContent;
   btn.textContent = '下载中...';
@@ -74,18 +74,26 @@ function tryUnlock(pw){
   } catch(e){}
   return false;
 }
+const REMEMBER_MS = 30*60*1000;
+function remember(pw){
+  try { sessionStorage.setItem('luyan_pw', pw); } catch(e){}
+  try { localStorage.setItem('luyan_pw', JSON.stringify({pw:pw, ts:Date.now()})); } catch(e){}
+}
+function readStoredPw(){
+  try { if(window.parent && window.parent!==window && window.parent.sessionStorage){ const p=window.parent.sessionStorage.getItem('luyan_pw'); if(p) return p; } } catch(e){}
+  try { const p=sessionStorage.getItem('luyan_pw'); if(p) return p; } catch(e){}
+  try { const raw=localStorage.getItem('luyan_pw'); if(raw){ try { const o=JSON.parse(raw); if(o&&o.pw&&(Date.now()-o.ts)<REMEMBER_MS) return o.pw; } catch(e){ return raw; } } } catch(e){}
+  return '';
+}
 function unlock(){
   const pw = document.getElementById('pw').value;
   const err = document.getElementById('err');
-  if(tryUnlock(pw)){ err.textContent=''; document.getElementById('gate').style.display='none'; return; }
+  if(tryUnlock(pw)){ err.textContent=''; remember(pw); document.getElementById('gate').style.display='none'; return; }
   err.textContent='密码错误，请重试';
 }
 (function(){
-  let pw='';
-  try { if(window.parent && window.parent!==window && window.parent.sessionStorage) pw = window.parent.sessionStorage.getItem('luyan_pw')||''; } catch(e){}
-  if(!pw){ try { pw = sessionStorage.getItem('luyan_pw')||''; } catch(e){} }
-  if(!pw){ try { pw = localStorage.getItem('luyan_pw')||''; } catch(e){} }
-  if(pw && tryUnlock(pw)){ document.getElementById('gate').style.display='none'; }
+  const pw = readStoredPw();
+  if(pw && tryUnlock(pw)){ remember(pw); document.getElementById('gate').style.display='none'; }
 })();
 </script>
 </body></html>
