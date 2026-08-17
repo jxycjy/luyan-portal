@@ -5,6 +5,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>路演提报系统—区域经理端</title>
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
 <style>
   :root{
     --teal:#0f9b8e; --teal-d:#0c7d72; --bg:#f3f7f7;
@@ -13,148 +14,87 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;overflow:hidden}
-  body{
-    font-family:"Microsoft YaHei","PingFang SC","Helvetica Neue",Arial,sans-serif;
-    background:var(--bg); color:var(--ink);
-  }
+  body{font-family:"Microsoft YaHei","PingFang SC","Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink)}
   .app{display:flex;height:100vh;width:100vw}
-
-  /* 左侧导航 */
-  .sidebar{
-    width:320px;min-width:320px;background:var(--sidebar);
-    border-right:1px solid var(--line);display:flex;flex-direction:column;
-    box-shadow:4px 0 18px rgba(15,155,142,.08);
-  }
-  .sidebar-header{
-    padding:20px 18px 16px;border-bottom:1px solid var(--line);
-    background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;
-  }
+  .sidebar{width:320px;min-width:320px;background:var(--sidebar);border-right:1px solid var(--line);display:flex;flex-direction:column;box-shadow:4px 0 18px rgba(15,155,142,.08)}
+  .sidebar-header{padding:20px 18px 16px;border-bottom:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff}
   .sidebar-header h1{font-size:18px;font-weight:600;letter-spacing:1px}
   .sidebar-header p{font-size:12px;opacity:.9;margin-top:4px}
-  .nav-title{
-    padding:12px 18px 6px;font-size:13px;color:var(--gray);font-weight:600;
-    text-transform:uppercase;letter-spacing:1px;
-  }
-  .nav-scroll{flex:1;overflow-y:auto;padding-bottom:20px}
+  .nav-title{padding:12px 18px 6px;font-size:13px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:1px}
   .group{margin-bottom:6px}
-  .group-label{
-    padding:10px 18px 4px;font-size:13px;color:var(--teal-d);font-weight:700;
-    display:flex;align-items:center;gap:8px;
-  }
-  .group-label::before{
-    content:"";display:inline-block;width:4px;height:14px;background:var(--teal);border-radius:2px;
-  }
-  .nav-item{
-    display:flex;align-items:flex-start;gap:8px;padding:11px 18px 11px 26px;
-    cursor:pointer;transition:background .15s;color:var(--ink);border-left:3px solid transparent;
-  }
+  .group-label{padding:10px 18px 4px;font-size:13px;color:var(--teal-d);font-weight:700;display:flex;align-items:center;gap:8px}
+  .group-label::before{content:"";display:inline-block;width:4px;height:14px;background:var(--teal);border-radius:2px}
+  .nav-item{display:flex;align-items:flex-start;gap:8px;padding:11px 18px 11px 26px;cursor:pointer;transition:background .15s;color:var(--ink);border-left:3px solid transparent}
   .nav-item:hover{background:var(--hover)}
   .nav-item.active{background:var(--active);border-left-color:var(--teal-d)}
-  .nav-item .num{
-    min-width:30px;text-align:right;font-size:13px;color:var(--teal-d);font-weight:700;flex-shrink:0;
-  }
+  .nav-item .num{min-width:30px;text-align:right;font-size:13px;color:var(--teal-d);font-weight:700;flex-shrink:0}
   .nav-item .text{font-size:14px;line-height:1.5}
   .nav-item.active .text{color:var(--teal-d);font-weight:600}
-
-  /* 二级分组 */
   .sub-group{margin:2px 0;background:var(--sub-bg);border-radius:8px;margin:0 8px 4px}
-  .sub-label{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:10px 12px 10px 18px;cursor:pointer;transition:background .15s;
-    border-radius:8px;color:var(--ink);
-  }
+  .sub-label{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 10px 18px;cursor:pointer;transition:background .15s;border-radius:8px;color:var(--ink)}
   .sub-label:hover{background:var(--hover)}
   .sub-label .left{display:flex;align-items:flex-start;gap:8px}
-  .sub-label .num{
-    min-width:30px;text-align:right;font-size:13px;color:var(--teal-d);font-weight:700;flex-shrink:0;
-  }
+  .sub-label .num{min-width:30px;text-align:right;font-size:13px;color:var(--teal-d);font-weight:700;flex-shrink:0}
   .sub-label .text{font-size:14px;font-weight:600;line-height:1.5}
-  .sub-label .arrow{
-    width:16px;height:16px;transition:transform .2s;color:var(--gray);flex-shrink:0;
-  }
+  .sub-label .arrow{width:16px;height:16px;transition:transform .2s;color:var(--gray);flex-shrink:0}
   .sub-label .arrow.rotated{transform:rotate(-90deg)}
   .sub-items{display:block}
   .sub-items.collapsed{display:none}
-  .sub-item{
-    display:flex;align-items:flex-start;gap:8px;
-    padding:9px 12px 9px 24px;margin-left:18px;
-    cursor:pointer;transition:background .15s;color:var(--ink);border-left:3px solid transparent;
-  }
+  .sub-item{display:flex;align-items:flex-start;gap:8px;padding:9px 12px 9px 24px;margin-left:18px;cursor:pointer;transition:background .15s;color:var(--ink);border-left:3px solid transparent}
   .sub-item:hover{background:var(--hover)}
   .sub-item.active{background:var(--active);border-left-color:var(--teal-d)}
-  .sub-item .num{
-    min-width:36px;text-align:right;font-size:12px;color:var(--teal-d);font-weight:700;flex-shrink:0;
-  }
+  .sub-item .num{min-width:36px;text-align:right;font-size:12px;color:var(--teal-d);font-weight:700;flex-shrink:0}
   .sub-item .text{font-size:13px;line-height:1.5}
   .sub-item.active .text{color:var(--teal-d);font-weight:600}
-
-  /* 右侧内容 */
   .main{flex:1;display:flex;flex-direction:column;min-width:0;background:#fff}
-  .main-header{
-    height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;
-    justify-content:space-between;padding:0 20px;background:#fff;flex-shrink:0;
-  }
+  .main-header{height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#fff;flex-shrink:0}
   .main-header .left{display:flex;align-items:center;gap:12px;min-width:0}
-  .main-header .label{
-    background:#e6f6f3;color:var(--teal-d);font-size:12px;padding:3px 10px;border-radius:12px;flex-shrink:0;
-  }
+  .main-header .label{background:#e6f6f3;color:var(--teal-d);font-size:12px;padding:3px 10px;border-radius:12px;flex-shrink:0}
   .main-header h2{font-size:17px;color:var(--teal-d);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .main-header .right{display:flex;align-items:center;gap:10px}
-  .btn{
-    display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:#fff;
-    text-decoration:none;padding:8px 16px;border-radius:8px;font-size:13px;transition:background .18s;flex-shrink:0;
-  }
+  .btn{display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:#fff;text-decoration:none;padding:8px 16px;border-radius:8px;font-size:13px;transition:background .18s;flex-shrink:0}
   .btn:hover{background:var(--teal-d)}
   .btn svg{width:14px;height:14px;fill:currentColor}
-  .mobile-toggle{
-    display:none;align-items:center;justify-content:center;width:36px;height:36px;
-    border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;margin-right:10px;
-  }
-
+  .mobile-toggle{display:none;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;margin-right:10px}
   .content{flex:1;position:relative;min-height:0;display:flex;flex-direction:column}
-  .tip-bar{
-    background:#fff8e6;color:#8a6d3b;font-size:12px;padding:8px 16px;border-bottom:1px solid #f0e4c6;
-    display:flex;align-items:center;gap:8px;
-  }
+  .tip-bar{background:#fff8e6;color:#8a6d3b;font-size:12px;padding:8px 16px;border-bottom:1px solid #f0e4c6;display:flex;align-items:center;gap:8px}
   iframe{flex:1;width:100%;border:none;background:#fff}
-
-  /* 欢迎页 */
-  .welcome{
-    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-align:center;padding:40px;background:var(--bg);
-  }
-  .welcome .big-ico{
-    width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,var(--teal),var(--teal-d));
-    display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff;
-    box-shadow:0 10px 28px rgba(15,155,142,.28);margin-bottom:20px;
-  }
+  .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;background:var(--bg)}
+  .welcome .big-ico{width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,var(--teal),var(--teal-d));display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff;box-shadow:0 10px 28px rgba(15,155,142,.28);margin-bottom:20px}
   .welcome h3{font-size:24px;color:var(--teal-d);margin-bottom:10px}
   .welcome p{color:var(--gray);font-size:15px;max-width:460px;line-height:1.7}
-  .welcome .quick{
-    margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
-  }
-  .welcome .quick span{
-    background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--ink);
-  }
-
-  /* 移动端 */
+  .welcome .quick{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .welcome .quick span{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--ink)}
   @media (max-width:768px){
-    .sidebar{
-      position:fixed;left:-320px;top:0;bottom:0;z-index:100;transition:left .25s;
-    }
+    .sidebar{position:fixed;left:-320px;top:0;bottom:0;z-index:100;transition:left .25s}
     .sidebar.open{left:0}
-    .overlay{
-      display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:99;
-    }
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:99}
     .overlay.show{display:block}
     .mobile-toggle{display:flex}
     .main-header{padding:0 12px}
   }
+  #gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f9b8e,#0c7d72);font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+  #gate .card{background:#fff;border-radius:16px;padding:36px 32px;width:340px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+  #gate .logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#0f9b8e,#0c7d72);display:inline-flex;align-items:center;justify-content:center;font-size:28px;color:#fff;margin-bottom:14px}
+  #gate h1{font-size:19px;color:#1f2d2b;margin-bottom:6px}
+  #gate p{font-size:13px;color:#6b7b78;margin-bottom:20px}
+  #gate input{width:100%;padding:12px 14px;border:1px solid #d7e3e0;border-radius:10px;font-size:15px;outline:none;box-sizing:border-box}
+  #gate input:focus{border-color:#0f9b8e}
+  #gate button{width:100%;margin-top:14px;padding:12px;border:none;border-radius:10px;background:#0f9b8e;color:#fff;font-size:15px;cursor:pointer;transition:background .18s}
+  #gate button:hover{background:#0c7d72}
+  #gate .err{color:#c0392b;font-size:13px;margin-top:12px;min-height:18px}
 </style>
 </head>
 <body>
+<div id="gate"><div class="card">
+  <div class="logo">🎯</div>
+  <h1>路演提报系统</h1>
+  <p>区域经理端 · 请输入访问密码</p>
+  <input id="pw" type="password" placeholder="访问密码" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()">
+  <button onclick="unlock()">进入门户</button>
+  <div class="err" id="err"></div>
+</div></div>
 <div class="app">
-  <!-- 左侧导航 -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <h1>路演提报系统—区域经理端</h1>
@@ -163,10 +103,7 @@
     <div class="nav-title">导航 / 目录</div>
     <nav class="nav-scroll" id="navScroll"></nav>
   </aside>
-
   <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-  <!-- 右侧内容 -->
   <main class="main">
     <div class="main-header">
       <div class="left">
@@ -197,31 +134,9 @@
     </div>
   </main>
 </div>
-
 <script>
-const menu = [
-  {cat:'操作说明', items:[
-    {id:'m1', title:'路演提报（预计）操作手册', type:'手册', url:'https://jxycjy.github.io/luyan-portal/manuals/yuji.html', desc:'区域经理端 · 路演预计计划填报的图文操作步骤与注意事项。'},
-    {id:'m2', title:'路演提报（实际）操作手册', type:'手册', url:'https://jxycjy.github.io/luyan-portal/manuals/shiji.html', desc:'区域经理端 · 路演实际执行填报的图文操作步骤与注意事项。'},
-    {id:'m3', title:'路演查询报表操作文档', type:'手册', url:'https://jxycjy.github.io/luyan-portal/manuals/baobiao.html', desc:'路演各类查询报表（费用汇总、预计与实际对比、薪资、盒马/永辉等）的使用说明。'}
-  ]},
-  {cat:'填报表单', items:[
-    {id:'f1', title:'路演提报（预计）', type:'表单', url:'https://t8ddwiwj15.jiandaoyun.com/f/6a66fd0c35ef884f02b29724', desc:'填写本周期 / 本场路演的预计计划（门店、日期、人数、预算等），提交后进入审核。'},
-    {id:'f2', title:'路演提报（实际）', type:'表单', url:'https://t8ddwiwj15.jiandaoyun.com/f/6a6707575a19a3dacb45aa1e', desc:'路演结束后填写实际执行情况（实际到场、达成、费用等），用于复盘与核对。'}
-  ]},
-  {cat:'查询报表', items:[
-    {id:'r1', title:'路演提报费用汇总查询', type:'报表', url:'https://t8ddwiwj15.jiandaoyun.com/dash/6a3b442b72111c0ce78dc892', desc:'查看路演提报的费用汇总数据，按需筛选与核对。'},
-    {id:'r2', title:'路演提报预计与实际对比情况', type:'报表', url:'https://t8ddwiwj15.jiandaoyun.com/dash/6a3cd96189a57d3def6df946', desc:'对比路演预计与实际执行情况，直观查看达成与差异。'},
-    {id:'r3', title:'促销人员薪资查询报表', type:'报表', url:'https://app75554.eapps.dingtalkcloud.com/decision/shared/0r9qjestf8b7j', desc:'查询促销人员薪资明细，按需筛选与核对（钉钉云数据决策平台）。'},
-    {sub:'盒马报表', items:[
-      {id:'r4', title:'盒马周度配货跟进表', type:'报表', url:'https://app75554.eapps.dingtalkcloud.com/decision/shared/0qwhyq1etb9xa', desc:'盒马周度配货跟进情况查询与跟进（钉钉云数据决策平台）。'},
-      {id:'r5', title:'盒马周度路演分析表', type:'报表', url:'https://app75554.eapps.dingtalkcloud.com/decision/shared/0qvjv3sb4a355', desc:'盒马路演分析数据查询（钉钉云数据决策平台）。'},
-      {id:'r6', title:'盒马路演分析查询报表', type:'报表', url:'https://app75554.eapps.dingtalkcloud.com/decision/shared/0qvwvtkk4ad9v', desc:'盒马路演分析表查询报表，按需筛选与核对（钉钉云数据决策平台）。'}
-    ]},
-  ]}
-];
-
-let activeId = null;
+const MENU_CIPHER = "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";
+let menu = null;
 const navScroll = document.getElementById('navScroll');
 const contentArea = document.getElementById('contentArea');
 const pageLabel = document.getElementById('pageLabel');
@@ -235,9 +150,7 @@ function flattenMenu(){
   menu.forEach((g, gi) => {
     g.items.forEach((it, ii) => {
       if(it.items){
-        it.items.forEach((sub, si) => {
-          list.push({...sub, num:`${gi+1}.${ii+1}.${si+1}`});
-        });
+        it.items.forEach((sub, si) => { list.push({...sub, num:`${gi+1}.${ii+1}.${si+1}`}); });
       }else{
         list.push({...it, num:`${gi+1}.${ii+1}`});
       }
@@ -245,7 +158,6 @@ function flattenMenu(){
   });
   return list;
 }
-
 function buildNav(){
   menu.forEach((g, gi) => {
     const group = document.createElement('div');
@@ -254,23 +166,17 @@ function buildNav(){
     label.className = 'group-label';
     label.textContent = g.cat;
     group.appendChild(label);
-
     g.items.forEach((it, ii) => {
       const num = `${gi+1}.${ii+1}`;
       if(it.items){
-        // 二级分组
         const subWrap = document.createElement('div');
         subWrap.className = 'sub-group';
         const subLabel = document.createElement('div');
         subLabel.className = 'sub-label';
-        subLabel.innerHTML = `
-          <div class="left"><span class="num">${num}</span><span class="text">${it.sub}</span></div>
-          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        `;
+        subLabel.innerHTML = `<div class="left"><span class="num">${num}</span><span class="text">${it.sub}</span></div><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>`;
         const subList = document.createElement('div');
         subList.className = 'sub-items';
         subList.id = `sub-${it.sub}`;
-
         it.items.forEach((sub, si) => {
           const subNum = `${num}.${si+1}`;
           const item = document.createElement('div');
@@ -280,7 +186,6 @@ function buildNav(){
           item.onclick = () => openItem(sub.id);
           subList.appendChild(item);
         });
-
         subLabel.onclick = () => {
           subList.classList.toggle('collapsed');
           subLabel.querySelector('.arrow').classList.toggle('rotated');
@@ -291,6 +196,7 @@ function buildNav(){
       }else{
         const item = document.createElement('div');
         item.className = 'nav-item';
+        item.dataset.id = it.className;
         item.dataset.id = it.id;
         item.innerHTML = `<span class="num">${num}</span><span class="text">${it.title}</span>`;
         item.onclick = () => openItem(it.id);
@@ -300,37 +206,38 @@ function buildNav(){
     navScroll.appendChild(group);
   });
 }
-
-function findItem(id){
-  return flattenMenu().find(it => it.id === id);
-}
-
+function findItem(id){ return flattenMenu().find(it => it.id === id); }
 function openItem(id){
   activeId = id;
   document.querySelectorAll('.nav-item, .sub-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
   const item = findItem(id);
   if(!item) return;
-
   pageLabel.textContent = item.type;
   pageTitle.textContent = item.title;
   openBtn.href = item.url;
   openBtn.style.display = 'inline-flex';
-
-  contentArea.innerHTML = `
-    <div class="tip-bar">⚠️ 若下方页面无法显示，请点击右上角「新窗口打开」。</div>
-    <iframe src="${item.url}" title="${item.title}" allowfullscreen></iframe>
-  `;
-
+  contentArea.innerHTML = `<div class="tip-bar">⚠️ 若下方页面无法显示，请点击右上角「新窗口打开」。</div><iframe src="${item.url}" title="${item.title}" allowfullscreen></iframe>`;
   if(window.innerWidth <= 768) toggleSidebar(false);
 }
-
+let activeId = null;
 function toggleSidebar(force){
   const open = force === undefined ? !sidebar.classList.contains('open') : force;
   sidebar.classList.toggle('open', open);
   overlay.classList.toggle('show', open);
 }
-
-buildNav();
+function unlock(){
+  const pw = document.getElementById('pw').value;
+  const err = document.getElementById('err');
+  try {
+    const bytes = CryptoJS.AES.decrypt(MENU_CIPHER, pw);
+    menu = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  } catch(e){ menu = null; }
+  if(!menu || !Array.isArray(menu)){ err.textContent='密码错误，请重试'; return; }
+  err.textContent='';
+  try { sessionStorage.setItem('luyan_pw', pw); localStorage.setItem('luyan_pw', pw); } catch(e){}
+  document.getElementById('gate').style.display='none';
+  buildNav();
+}
 </script>
 </body>
 </html>
