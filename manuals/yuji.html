@@ -28,7 +28,7 @@ img{width:100%;height:auto;display:block;margin-bottom:14px;border-radius:8px;bo
 <div id="gate"><div class="card">
   <div class="logo">📘</div>
   <h1>操作手册</h1>
-  <p>请输入访问密码</p>
+  <p>请输入访问密码（30 分钟内免登录）</p>
   <input id="pw" type="password" placeholder="访问密码" autocomplete="off" onkeydown="if(event.key==='Enter')unlock()">
   <button onclick="unlock()">查看手册</button>
   <div class="err" id="err"></div>
@@ -36,7 +36,7 @@ img{width:100%;height:auto;display:block;margin-bottom:14px;border-radius:8px;bo
 <div class="bar"><span class="t" id="mtitle">路演提报（预计）操作手册 · 网页版</span><a href="javascript:void(0)" class="btn" id="dlbtn">下载 PDF 到本地</a></div>
 <div class="wrap" id="mwrap"></div>
 <script>
-const DATA_CIPHER = "U2FsdGVkX1/X1cXQFWI6fpXzuRgjiJHTHRKD/kBXg6vuuHS1GSeeYsCsbnoO2S4yQ2slZoa9dniBZxCbXP1dCkj8uwQoSMY74af15SHVvKIadtJQ+H5RW+MPuXz01GZMv2XrhrHdNgISEADvfKgPQKIuj1adQz5aB18npmEFnkj0rKyNwp8kBDbFsa60vzwpWic3faZ++rmLvbu5HU+C4n54rDExSYWMWll4baeINcvhR6JnPx5OUeBFAbNXImDpyqm+WttvCn0ZaTm0F5IIiDyAwc3DpOkb+bX27jpJxKrPgANUkxmO9W2vrpM3jTONg9+9gX+2zlYyKFIo4fOFAVZ50eophZa6pWU8uJ7kRdRkfcpHAjMK9Q5L6IKOLbeNKyJ9xN0Iydu00yl4BMMWDRSG3eIBjMyHqCcdZliJ2t8QPpUwzkWhltxFqelyccGadGIVkI5gbiQiETd2HsHv0nZbsPV/agSmr9s/e8dr85v7mTVng3kFl0Aib48d7X1olEgCXVeCjiI2pgmHfYGbgDY6p56JedoLhAP+iLnYdjzcM7lPdpfxOF0n11RG9aum4tJDiYstbC2ZgiHV7Rp1ltP1vGXRkZo1y43OYAfJ9PtlQjTZsO1MDlmTrlqnQAOBjhe8hYyV8Vtc++twp3Fa7qAnCRfG1E4y4MxTi9Wclx2k03B0gkCBRL75TRbxvMHyYkeZZIv+Fhsbxj1y/E2CjdS8z/BPvuFuGCOjnKmQJ7E=";
+const DATA_CIPHER = "U2FsdGVkX1+Q4pmDVfc3DUxLch1wN1xpVJulYogeDH9xUrk7T3lgYlLcnpES/3Lx5Kdmn6YAJ5c+DXQuTQ9zJ0vSKB+OYij9ZMYfi/TBlx3P1IJOLrc6I/j8zi1rUD/BzPnOaBVq+uX9VGmD8fUtDexZc8nYJP8ccEFFkgti1HPsfiCX1Eo18Bb9dLvQSS+7AuVUd13YOLn3HUI/+9CggCm6vRdcuu/7d2ddt+FQBCTI7QBXCHKXJOFxLQ/au/opB8zqpzugVp1stIEzKQncPnkrDNUHGRYVytiybCN/y2rayvr0PArVxgaLe/sqrO9EAe06rCIvmwnMOUyUiYVU+XP3fSbV5/lDH/Q50A6Fif4TeeLk9k7msO/w9FVkvGhNevEuaIF0EDH63lk0r0JPvvzAWLBUxV+6A+GQiKMQRZBZUINgcBv+ayRNL3Gs8aCdc3A47VVxMYA5YMyLxvQ7ItEEoHU7GMC0vA7qTBDgjU42aaTFVC7/fmCKoZmW57CSYcx1ZZCXBkIRq6dj8gYF9EbrLoIGunAyuL6zKwfhlH7NcMku7tvNNB5nEP3blJcfHBfUXzVhTs8bDxO7xYfcHrqpKRUZgQaC+zRP++xCqjpHR/1096ds57AY+iDXcIWM4Urd4L2hn5SeVU2fiutpt5a7qNgQgJ4FjbNXHaMHjca+tMuG4dS/yKoF40SWbHY1VbfpnX0PXiWEmPVkfq+v9vgoPsIUbDPzOAmbd+4XAag=";
 async function downloadPdf(btn, url, filename){
   const orig = btn.textContent;
   btn.textContent = '下载中...';
@@ -74,18 +74,26 @@ function tryUnlock(pw){
   } catch(e){}
   return false;
 }
+const REMEMBER_MS = 30*60*1000;
+function remember(pw){
+  try { sessionStorage.setItem('luyan_pw', pw); } catch(e){}
+  try { localStorage.setItem('luyan_pw', JSON.stringify({pw:pw, ts:Date.now()})); } catch(e){}
+}
+function readStoredPw(){
+  try { if(window.parent && window.parent!==window && window.parent.sessionStorage){ const p=window.parent.sessionStorage.getItem('luyan_pw'); if(p) return p; } } catch(e){}
+  try { const p=sessionStorage.getItem('luyan_pw'); if(p) return p; } catch(e){}
+  try { const raw=localStorage.getItem('luyan_pw'); if(raw){ try { const o=JSON.parse(raw); if(o&&o.pw&&(Date.now()-o.ts)<REMEMBER_MS) return o.pw; } catch(e){ return raw; } } } catch(e){}
+  return '';
+}
 function unlock(){
   const pw = document.getElementById('pw').value;
   const err = document.getElementById('err');
-  if(tryUnlock(pw)){ err.textContent=''; document.getElementById('gate').style.display='none'; return; }
+  if(tryUnlock(pw)){ err.textContent=''; remember(pw); document.getElementById('gate').style.display='none'; return; }
   err.textContent='密码错误，请重试';
 }
 (function(){
-  let pw='';
-  try { if(window.parent && window.parent!==window && window.parent.sessionStorage) pw = window.parent.sessionStorage.getItem('luyan_pw')||''; } catch(e){}
-  if(!pw){ try { pw = sessionStorage.getItem('luyan_pw')||''; } catch(e){} }
-  if(!pw){ try { pw = localStorage.getItem('luyan_pw')||''; } catch(e){} }
-  if(pw && tryUnlock(pw)){ document.getElementById('gate').style.display='none'; }
+  const pw = readStoredPw();
+  if(pw && tryUnlock(pw)){ remember(pw); document.getElementById('gate').style.display='none'; }
 })();
 </script>
 </body></html>
