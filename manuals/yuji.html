@@ -2,24 +2,30 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>路演提报（预计）操作手册（网页版）</title>
+<title>路演提报（预计）操作手册（PDF 版）</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#eef1f4;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
-.bar{position:sticky;top:0;background:#0f9b8e;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.bar{position:sticky;top:0;background:#0f9b8e;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.15);flex-wrap:wrap}
 .bar .t{font-size:15px;font-weight:600}
-.bar a{color:#fff;background:rgba(255,255,255,.18);text-decoration:none;font-size:13px;padding:6px 14px;border-radius:8px}
+.bar .acts{display:flex;gap:8px;flex-wrap:wrap}
+.bar a{color:#fff;background:rgba(255,255,255,.18);text-decoration:none;font-size:13px;padding:6px 14px;border-radius:8px;white-space:nowrap}
 .bar a:hover{background:rgba(255,255,255,.3)}
-.wrap{max-width:960px;margin:0 auto;padding:16px}
-img{width:100%;height:auto;display:block;margin-bottom:14px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.12);background:#fff}
-.note{text-align:center;color:#8a99a6;font-size:12px;padding:8px}
+.frame{width:100%;height:calc(100vh - 54px);border:0;background:#fff}
+.tip{text-align:center;color:#6b7b78;font-size:12px;padding:6px}
 </style>
 </head>
 <body>
-<div class="bar"><span class="t" id="mtitle">路演提报（预计）操作手册 · 网页版</span><a href="javascript:void(0)" class="btn" id="dlbtn">下载 PDF 到本地</a></div>
-<div class="wrap" id="mwrap"></div>
+<div class="bar"><span class="t" id="mtitle">路演提报（预计）操作手册 · PDF 版</span>
+  <span class="acts">
+    <a href="javascript:void(0)" class="btn" id="dlbtn">下载 PDF 到本地</a>
+    <a href="#" id="openbtn" target="_blank" rel="noopener">新窗口打开</a>
+  </span>
+</div>
+<iframe id="pdf" class="frame" title="路演提报（预计）操作手册"></iframe>
+<div class="tip">若上方 PDF 未能加载，请点击右上角「新窗口打开」或「下载 PDF 到本地」。</div>
 <script>
-const DATA = {"title": "路演提报（预计）操作手册", "pdfUrl": "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/%E8%B7%AF%E6%BC%94%E6%8F%90%E6%8A%A5%EF%BC%88%E9%A2%84%E8%AE%A1%EF%BC%89%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C.pdf", "pdfName": "路演提报（预计）操作手册.pdf", "images": ["https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/yuji/s01.jpg", "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/yuji/s02.jpg", "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/manuals/yuji/s03.jpg"]};
+const DATA = {"title": "路演提报（预计）操作手册", "pdfUrl": "https://cdn.jsdelivr.net/gh/jxycjy/luyan-portal@master/%E8%B7%AF%E6%BC%94%E6%8F%90%E6%8A%A5%EF%BC%88%E9%A2%84%E8%AE%A1%EF%BC%89%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C.pdf", "pdfName": "路演提报（预计）操作手册.pdf"};
 async function downloadPdf(btn, url, filename){
   const orig = btn.textContent;
   btn.textContent = '下载中...';
@@ -44,10 +50,12 @@ async function downloadPdf(btn, url, filename){
 }
 (function(){
   const d = DATA;
-  document.getElementById('mtitle').textContent = d.title + ' · 网页版（图片按需加载，更快）';
+  document.getElementById('mtitle').textContent = d.title + ' · PDF 版';
+  const frame = document.getElementById('pdf');
+  frame.src = d.pdfUrl;
+  document.getElementById('openbtn').href = d.pdfUrl;
   const bar = document.getElementById('dlbtn');
   bar.onclick = function(){ downloadPdf(bar, d.pdfUrl, d.pdfName); };
-  document.getElementById('mwrap').innerHTML = d.images.map((u,i)=>'<img loading="lazy" src="'+u+'" alt="'+d.title+' 第'+(i+1)+'张" width="100%">').join('') + '<div class="note">— 已到底 —</div>';
 })();
 </script>
 </body></html>
